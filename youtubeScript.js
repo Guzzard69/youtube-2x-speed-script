@@ -2,9 +2,12 @@
 // @name         Youtube 2x Speed
 // @namespace    http://tampermonkey.net/
 // @version      0.1
-// @description  try to take over the world!
-// @author       You
-// @match        https://www.youtube.com/*
+// @description  A script to automatically set Youtube videos to 2x playback speed.
+// @author       Guzzard
+// @include      https://www.youtube.com*
+// @include      https://www.youtube.com/*
+// @require      http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js
+// @require      https://gist.github.com/raw/2625891/waitForKeyElements.js
 // ==/UserScript==
 
 const ClickButton = (buttons, buttonInnerHtml) => {
@@ -21,7 +24,7 @@ const main = () => {
 
     console.log('function working');
 
-    if (!window.location.href.includes("watch")) return;
+    if (!window.location.href.startsWith("https://www.youtube.com/watch")) return;
 
     console.log('passed url check');
 
@@ -33,7 +36,9 @@ const main = () => {
 
     var metaTags = document.getElementsByTagName('meta');
     for (let i = 0; i < metaTags.length; i++){
-        if (musicTags.includes(metaTags[i].content)) return;
+        if (musicTags.includes(metaTags[i].content)){
+            console.log('Script not loaded: the current video was flagged as music.')
+        };
     }
 
     let settingsButtonClick = document.querySelector('.ytp-settings-button').click();
@@ -45,4 +50,7 @@ const main = () => {
     ClickButton(playbackSpeedButtons, '2');
 };
 
-main();
+waitForKeyElements (
+    '.ytp-settings-button',
+    main
+);
